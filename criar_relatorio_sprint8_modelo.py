@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parent
 OUTPUT = ROOT / "Entrega_Sprint_8_ISO_Schemathesis_CI.docx"
 ASSETS = ROOT / "relatorio_assets"
 ASSETS.mkdir(exist_ok=True)
-ACTIONS_URL = "https://github.com/tanasouza/internet_banking_tests/actions/runs/28097608283"
+ACTIONS_URL = "https://github.com/tanasouza/internet_banking_tests/actions/runs/28097911010"
 
 
 def read_text(path):
@@ -101,14 +101,14 @@ def create_actions_print():
     draw.text((42, 24), "GitHub Actions - Testes do internet banking", font=title, fill="#ffffff")
     draw.rounded_rectangle((44, 126, 1356, 585), radius=12, outline="#d0d7de", width=2, fill="#ffffff")
     draw.ellipse((80, 170, 122, 212), fill="#1a7f37")
-    draw.text((142, 170), "Add sprint 8 CI traceability deliverables", font=title, fill="#24292f")
+    draw.text((142, 170), "Update sprint 8 report with GitHub Actions evidence", font=title, fill="#24292f")
     lines = [
         "Workflow: Testes do internet banking",
         "Status: completed / success",
         "Branch: main    Event: push",
-        "Run ID: 28097608283",
-        "Criado: 2026-06-24T12:12:58Z",
-        "Finalizado: 2026-06-24T12:13:35Z",
+        "Run ID: 28097911010",
+        "Criado: 2026-06-24T12:18:30Z",
+        "Finalizado: 2026-06-24T12:19:02Z",
         f"URL: {ACTIONS_URL}",
     ]
     y = 250
@@ -275,13 +275,13 @@ def add_ci(doc):
     heading(doc, "3.1. URL publica do repositorio no GitHub")
     p(
         doc,
-        "Repositorio publico: https://github.com/tanasouza/internet_banking_tests. O workflow executado esta disponivel em: https://github.com/tanasouza/internet_banking_tests/actions/runs/28097608283.",
+        "Repositorio publico: https://github.com/tanasouza/internet_banking_tests. O workflow executado esta disponivel em: https://github.com/tanasouza/internet_banking_tests/actions/runs/28097911010.",
     )
 
     heading(doc, "3.2. Print da aba Actions mostrando o ultimo run")
     p(
         doc,
-        "O ultimo run do GitHub Actions foi executado no branch main, por push, com status completed/success. O workflow foi Testes do internet banking e durou 37 segundos, de 2026-06-24T12:12:58Z a 2026-06-24T12:13:35Z.",
+        "O ultimo run do GitHub Actions foi executado no branch main, por push, com status completed/success. O workflow foi Testes do internet banking e durou 32 segundos, de 2026-06-24T12:18:30Z a 2026-06-24T12:19:02Z.",
     )
     print_path = create_actions_print()
     paragraph = doc.add_paragraph()
