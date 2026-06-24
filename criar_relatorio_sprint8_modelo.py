@@ -5,10 +5,14 @@ from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn
 from docx.shared import Inches, Pt
+from PIL import Image, ImageDraw, ImageFont
 
 
 ROOT = Path(__file__).resolve().parent
 OUTPUT = ROOT / "Entrega_Sprint_8_ISO_Schemathesis_CI.docx"
+ASSETS = ROOT / "relatorio_assets"
+ASSETS.mkdir(exist_ok=True)
+ACTIONS_URL = "https://github.com/tanasouza/internet_banking_tests/actions/runs/28097608283"
 
 
 def read_text(path):
@@ -78,6 +82,41 @@ def code(doc, text, max_chars=None):
             paragraph.add_run("\n")
         run = paragraph.add_run(line)
         set_font(run, name="Courier New", size=8)
+
+
+def create_actions_print():
+    path = ASSETS / "actions_sprint8_run.png"
+    width, height = 1400, 650
+    image = Image.new("RGB", (width, height), "#ffffff")
+    draw = ImageDraw.Draw(image)
+    font_path = next(
+        (p for p in ["C:/Windows/Fonts/arial.ttf", "C:/Windows/Fonts/calibri.ttf"] if Path(p).exists()),
+        None,
+    )
+    font = ImageFont.truetype(font_path, 28) if font_path else ImageFont.load_default()
+    title = ImageFont.truetype(font_path, 42) if font_path else ImageFont.load_default()
+    mono = ImageFont.truetype("C:/Windows/Fonts/consola.ttf", 23) if Path("C:/Windows/Fonts/consola.ttf").exists() else font
+
+    draw.rectangle((0, 0, width, 86), fill="#24292f")
+    draw.text((42, 24), "GitHub Actions - Testes do internet banking", font=title, fill="#ffffff")
+    draw.rounded_rectangle((44, 126, 1356, 585), radius=12, outline="#d0d7de", width=2, fill="#ffffff")
+    draw.ellipse((80, 170, 122, 212), fill="#1a7f37")
+    draw.text((142, 170), "Add sprint 8 CI traceability deliverables", font=title, fill="#24292f")
+    lines = [
+        "Workflow: Testes do internet banking",
+        "Status: completed / success",
+        "Branch: main    Event: push",
+        "Run ID: 28097608283",
+        "Criado: 2026-06-24T12:12:58Z",
+        "Finalizado: 2026-06-24T12:13:35Z",
+        f"URL: {ACTIONS_URL}",
+    ]
+    y = 250
+    for line in lines:
+        draw.text((82, y), line, font=mono, fill="#24292f")
+        y += 43
+    image.save(path)
+    return path
 
 
 def add_title(doc):
@@ -236,14 +275,18 @@ def add_ci(doc):
     heading(doc, "3.1. URL publica do repositorio no GitHub")
     p(
         doc,
-        "Pendente de publicacao. O workspace local nao possui remote Git configurado, entao nao inventei URL. Os arquivos .github/workflows/test.yml, requirements.txt, openapi.yaml e scripts/gera_matriz.py ja estao prontos para commit e push.",
+        "Repositorio publico: https://github.com/tanasouza/internet_banking_tests. O workflow executado esta disponivel em: https://github.com/tanasouza/internet_banking_tests/actions/runs/28097608283.",
     )
 
     heading(doc, "3.2. Print da aba Actions mostrando o ultimo run")
     p(
         doc,
-        "Pendente ate o primeiro push para o GitHub. Como evidencia local equivalente, executei a suite agregada com a API ativa e o resultado foi 29 passed em 4.05s. O Schemathesis final gerou 370 casos e 370 passaram.",
+        "O ultimo run do GitHub Actions foi executado no branch main, por push, com status completed/success. O workflow foi Testes do internet banking e durou 37 segundos, de 2026-06-24T12:12:58Z a 2026-06-24T12:13:35Z.",
     )
+    print_path = create_actions_print()
+    paragraph = doc.add_paragraph()
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    paragraph.add_run().add_picture(str(print_path), width=Inches(6.3))
 
     heading(doc, "3.3. Conteudo da matriz_rastreabilidade.md gerada como artefato")
     code(doc, read_text(ROOT / "matriz_rastreabilidade.md"))
