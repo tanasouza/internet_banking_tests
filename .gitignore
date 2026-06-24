@@ -9,4 +9,6 @@ banking.db
 mutants/
 sprint5_render/
 sprint7_render/
+github_actions_artifact/
+github_actions_artifact_final/
 *.log

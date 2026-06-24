@@ -85,6 +85,10 @@ def code(doc, text, max_chars=None):
 
 
 def create_actions_print():
+    real_print = ASSETS / "actions_sprint8_run_real.png"
+    if real_print.exists():
+        return real_print
+
     path = ASSETS / "actions_sprint8_run.png"
     width, height = 1400, 650
     image = Image.new("RGB", (width, height), "#ffffff")
