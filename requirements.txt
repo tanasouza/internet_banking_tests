@@ -1,0 +1,6 @@
+Flask
+hypothesis
+pytest
+pytest-bdd
+requests
+schemathesis

@@ -1,0 +1,12 @@
+.coverage
+.hypothesis/
+.pytest_cache/
+.venv/
+.venv-linux/
+__pycache__/
+*.pyc
+banking.db
+mutants/
+sprint5_render/
+sprint7_render/
+*.log

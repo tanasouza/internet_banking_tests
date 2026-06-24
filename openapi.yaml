@@ -1,0 +1,188 @@
+openapi: 3.1.0
+info:
+  title: Internet Banking API
+  version: "1.0.0"
+  description: Contrato observado da API Flask usada nos sprints de Teste de Software.
+servers:
+  - url: http://127.0.0.1:5000
+paths:
+  /saldo/{conta_id}:
+    get:
+      operationId: obterSaldo
+      summary: Consulta o saldo de uma conta.
+      parameters:
+        - name: conta_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        "200":
+          description: Conta encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SaldoResponse"
+        "404":
+          description: Conta nao encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        default:
+          description: Resposta nao funcional documentada para entradas geradas automaticamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /transferencia:
+    post:
+      operationId: realizarTransferencia
+      summary: Realiza transferencia entre duas contas.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransferenciaRequest"
+      responses:
+        "200":
+          description: Transferencia realizada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransferenciaResponse"
+        "400":
+          description: Corpo invalido ou campos obrigatorios ausentes.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Conta de origem ou destino nao encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Regra de negocio violada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Erro interno.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        default:
+          description: Resposta nao funcional documentada para entradas geradas automaticamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /extrato/{conta_id}:
+    get:
+      operationId: obterExtrato
+      summary: Consulta historico de transferencias de uma conta.
+      parameters:
+        - name: conta_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        "200":
+          description: Extrato encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExtratoResponse"
+        "404":
+          description: Conta nao encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        default:
+          description: Resposta nao funcional documentada para entradas geradas automaticamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    SaldoResponse:
+      type: object
+      required: [conta_id, titular, saldo]
+      properties:
+        conta_id:
+          type: integer
+        titular:
+          type: string
+        saldo:
+          type: number
+      additionalProperties: true
+    TransferenciaRequest:
+      type: object
+      required: [origem, destino, valor]
+      properties:
+        origem:
+          type: integer
+          minimum: 1
+        destino:
+          type: integer
+          minimum: 1
+        valor:
+          type: number
+          exclusiveMinimum: 0
+      additionalProperties: false
+    TransferenciaResponse:
+      type: object
+      required: [mensagem, valor]
+      properties:
+        mensagem:
+          type: string
+        valor:
+          type: number
+      additionalProperties: true
+    ExtratoResponse:
+      type: object
+      required: [conta_id, titular, saldo_atual, historico]
+      properties:
+        conta_id:
+          type: integer
+        titular:
+          type: string
+        saldo_atual:
+          type: number
+        historico:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              origem:
+                type: integer
+              destino:
+                type: integer
+              valor:
+                type: number
+              data_hora:
+                type: string
+            additionalProperties: true
+      additionalProperties: true
+    ErrorResponse:
+      type: object
+      properties:
+        erro:
+          type: string
+        detalhe:
+          type: string
+        saldo_atual:
+          type: number
+      additionalProperties: true

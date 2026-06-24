@@ -1,0 +1,24 @@
+name: Testes do internet banking
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: python app.py &
+      - run: sleep 3
+      - run: pytest test_ia_gerado.py test_hypothesis.py test_flask_client.py features/ -v --junit-xml=report.xml
+      - run: schemathesis run openapi.yaml --url=http://127.0.0.1:5000 --checks all --exclude-checks positive_data_acceptance --max-examples=100
+      - run: python scripts/gera_matriz.py report.xml > matriz_rastreabilidade.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: evidencia
+          path: |
+            report.xml
+            matriz_rastreabilidade.md
